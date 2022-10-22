@@ -1,6 +1,6 @@
 {
 
-  "name": "ksnk/text",
+  "name": "ksnk/core",
   "description": "cms core to hold in one place",
   "keywords": ["ksnk", "core", "cms"],
   "license": "MIT",
