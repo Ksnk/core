@@ -550,11 +550,15 @@ class UTILS
     static function bundle($args=[]){
         $filename=[];$time=-1;$ext='';
         foreach($args as &$a){
+            if (0===strpos($a,'http')) {
+                $filename[]=$a;
+                continue;
+            }
             $a= Autoload::find($a);
             $pi = pathinfo($a);
             if ($pi['extension'] == 'js') {
                 $ext='.js';
-                if (file_exists($pp = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
+                 if (file_exists($pp = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
                     $a=$pp;
                     $filename[]=$pi['basename'];
                     $time=max($time,filemtime($a));
@@ -584,8 +588,13 @@ class UTILS
         }
         $h=fopen($name,'a+');
         foreach($args as $p){
-            if(!file_exists($p)) continue;
-            $file2 = file_get_contents($p);
+            if (0===strpos($p,'http')) {
+                $file2 = file_get_contents($p);
+            } elseif(!file_exists($p)) {
+                continue;
+            } else {
+                $file2 = file_get_contents($p);
+            }
             fwrite($h, $file2.PHP_EOL);
         }
         fclose($h);
