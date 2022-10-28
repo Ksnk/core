@@ -637,6 +637,11 @@ class UTILS
                         $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($p);
                         break;
                     }
+                } else if ($pi['extension'] == 'css') {
+                    if (file_exists($pmin = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
+                        $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($p);
+                        break;
+                    }
                 }
                 $link = ENGINE::link(realpath($p), 'file2url') . '?' . filemtime($p);
                 break;
