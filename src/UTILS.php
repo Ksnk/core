@@ -48,15 +48,15 @@ class UTILS
      * @param $s
      * @return string|string[]|null
      */
-    static function ob_html_compress($s){
-        $curplaceloder=0; $placeholder=[];
-        $_replace= function ($m) use (&$curplaceloder,&$placeholder)
-        {
+    static function ob_html_compress($s)
+    {
+        $curplaceloder = 0;
+        $placeholder = [];
+        $_replace = function ($m) use (&$curplaceloder, &$placeholder) {
             $placeholder[$curplaceloder] = $m[2];
-            return $m[1] . '@' . $curplaceloder++ . '@' . ($m[3]??'');
+            return $m[1] . '@' . $curplaceloder++ . '@' . ($m[3] ?? '');
         };
-        $_return = static function ($m) use (&$placeholder)
-        {
+        $_return = static function ($m) use (&$placeholder) {
             return $placeholder[$m[1]];
         };
 
@@ -117,33 +117,33 @@ class UTILS
         $s = preg_replace_callback('#(<textarea[^>]*>)(.*?)(</textarea[^>]*>)#is', $_replace, $s);
         for (; $start < $curplaceloder; $start++) {
             $placeholder[$start] = preg_replace_callback('#@(\d+)@#'
-                , $_return,$placeholder[$start]
+                , $_return, $placeholder[$start]
             );
         }
         $start = $curplaceloder;
         $s = preg_replace_callback('#(<pre[^>]*>)(.*?)(</pre[^>]*>)#is', $_replace, $s);
         for (; $start < $curplaceloder; $start++) {
             $placeholder[$start] = preg_replace_callback('#@(\d+)@#'
-                , $_return,$placeholder[$start]
+                , $_return, $placeholder[$start]
             );
         }
         //стили
         $start = $curplaceloder;
         $s = preg_replace_callback('#(<style[^>]*>)(.*?)(</style[^>]*>)#is', $_replace, $s);
         for (; $start < $curplaceloder; $start++) {
-            $repl=[
-                '#/\*.*?\*/#s'=>'',
-                '/\s\s+/'=>' ',
+            $repl = [
+                '#/\*.*?\*/#s' => '',
+                '/\s\s+/' => ' ',
             ];
             $placeholder[$start] = preg_replace_callback('#@(\d+)@#', $_return,
-                preg_replace(array_keys($repl),array_values($repl),$placeholder[$start])
+                preg_replace(array_keys($repl), array_values($repl), $placeholder[$start])
             );
         }
         // условные комментарии
         $s = preg_replace_callback('#(<!--\[)(.*?)(]-->)#is', $_replace, $s);
         // пробелы
         $s = preg_replace(
-            array('/<!--.*?-->/s',  '/\s+/'
+            array('/<!--.*?-->/s', '/\s+/'
             , '#\s*(<|</)(!doctype|html|body|div|br|script|style|form|option|dd|h1|h2|h3|h4|dt|dl|li|p|iframe)([^<]*>)\s*#is'),
             array('', ' ', '\1\2\3'),
             $s);
@@ -289,24 +289,24 @@ class UTILS
      * @param string $name - имя поля формы. Если не указывать, будут все загруженные файлы
      * @return array
      */
-    static function uploadedFiles($name='')
+    static function uploadedFiles($name = '')
     {
         $uploaded = array();
         $paths = array();
-        $FF=$_FILES;
-        if(!empty($name)){
-            if(isset($_FILES[$name])){
-                $FF=[$name=>$_FILES[$name]];
+        $FF = $_FILES;
+        if (!empty($name)) {
+            if (isset($_FILES[$name])) {
+                $FF = [$name => $_FILES[$name]];
             } else {
-                $FF=[];
+                $FF = [];
             }
         }
-        if(!empty($FF))
-        foreach ($FF as $x => $y) {
-            if (!empty($_FILES[$x]['name'])) {
-                self::_relist($_FILES[$x]['name'], $paths, $x . '|{{}}');
+        if (!empty($FF))
+            foreach ($FF as $x => $y) {
+                if (!empty($_FILES[$x]['name'])) {
+                    self::_relist($_FILES[$x]['name'], $paths, $x . '|{{}}');
+                }
             }
-        }
         foreach ($paths as $p) {
             $u = array(
                 'name' => self::val($_FILES, str_replace('{{}}', 'name', $p), 'x'),
@@ -314,15 +314,15 @@ class UTILS
                 'tmp_name' => self::val($_FILES, str_replace('{{}}', 'tmp_name', $p), 'x'),
                 'type' => self::val($_FILES, str_replace('{{}}', 'type', $p), 'x'),
                 'size' => self::val($_FILES, str_replace('{{}}', 'size', $p), 'x'),
-               // 'path' => $p
+                // 'path' => $p
             );
-            if(0===$u['error'] && empty($u['type']=='x')){
-                $u['type']=mime_content_type ($u['tmp_name']);
+            if (0 === $u['error'] && empty($u['type'] == 'x')) {
+                $u['type'] = mime_content_type($u['tmp_name']);
             }
-            if(0===$u['error'] && empty($u['size']=='x')){
-                $u['size']=filesize($u['tmp_name']);
+            if (0 === $u['error'] && empty($u['size'] == 'x')) {
+                $u['size'] = filesize($u['tmp_name']);
             }
-            $uploaded[]=$u;
+            $uploaded[] = $u;
         }
         return $uploaded;
     }
@@ -332,13 +332,14 @@ class UTILS
      * @param $str
      * @return float|int
      */
-    static function parseKMG($str){
-        if(preg_match('/^(.*)(?:([кk])|([мm])|([гg]))$/iu',$str,$m)){
-            if(!empty($m[2])) return 1024*$m[1];
-            if(!empty($m[3])) return 1024*1024*$m[1];
-            if(!empty($m[4])) return 1024*1024*1024*$m[1];
+    static function parseKMG($str)
+    {
+        if (preg_match('/^(.*)(?:([кk])|([мm])|([гg]))$/iu', $str, $m)) {
+            if (!empty($m[2])) return 1024 * $m[1];
+            if (!empty($m[3])) return 1024 * 1024 * $m[1];
+            if (!empty($m[4])) return 1024 * 1024 * 1024 * $m[1];
         }
-        return 1*$str;
+        return 1 * $str;
     }
 
     /**
@@ -399,10 +400,10 @@ class UTILS
 
     static function val($rec, $disp = '', $default = '')
     {
-        if (empty($disp)){
-            if(empty($rec)) return $default;
+        if (empty($disp)) {
+            if (empty($rec)) return $default;
             return $rec;
-        } ;
+        };
         $x = explode('|', $disp);
         $v = $rec;
         foreach ($x as $xx) {
@@ -435,7 +436,7 @@ class UTILS
         $result = array();
         if (!is_array($dirs)) $dirs = [$dirs];
         foreach ($dirs as $dir) {
-            $mask = self::masktoreg(ltrim($dir,'/'));
+            $mask = self::masktoreg(ltrim($dir, '/'));
             //ENGINE::debug($dir,$mask);
             $dd = preg_split('~[^/]*[\*\?]~', $dir, 2);
             if (false === $dd || count($dd) == 1) {
@@ -443,7 +444,7 @@ class UTILS
                 $result[$dir] = 1;
             } else {
                 $iterator = new RecursiveIteratorIterator(
-                    new RecursiveDirectoryIterator($dd[0]?:'.'), RecursiveIteratorIterator::CHILD_FIRST
+                    new RecursiveDirectoryIterator($dd[0] ?: '.'), RecursiveIteratorIterator::CHILD_FIRST
                 );
                 /** @var SplFileInfo $path */
                 foreach ($iterator as $path) {
@@ -547,55 +548,63 @@ class UTILS
     /**
      * @param array[string] $args
      */
-    static function bundle($args=[]){
-        $filename=[];$time=-1;$ext='';
-        foreach($args as &$a){
-            if (0===strpos($a,'http')) {
-                $filename[]=$a;
+    static function bundle($args = [])
+    {
+        $filename = [];
+        $time = -1;
+        $ext = '';
+        foreach ($args as &$a) {
+            if (0 === strpos($a, 'http')) {
+                $filename[] = $a;
                 continue;
             }
-            $a= Autoload::find($a);
+            $a = Autoload::find($a);
             $pi = pathinfo($a);
             if ($pi['extension'] == 'js') {
-                $ext='.js';
-                 if (file_exists($pp = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
-                    $a=$pp;
-                    $filename[]=$pi['basename'];
-                    $time=max($time,filemtime($a));
-                    continue;
+                $ext = '.js';
+                if (file_exists($pp = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
+                    if (filemtime($pp) >= filemtime($a)) {
+                        $a = $pp;
+                        $filename[] = $pi['basename'];
+                        $time = max($time, filemtime($a));
+                        continue;
+                    }
                 }
             } else if ($pi['extension'] == 'css') {
-                $ext='.css';
+                $ext = '.css';
                 if (file_exists($pp = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
-                    $a=$pp;
-                    $filename[]=$pi['basename'];
-                    $time=max($time,filemtime($a));
-                    continue;
+                    if (filemtime($pp) >= filemtime($a)) {
+                        $a = $pp;
+                        $filename[] = $pi['basename'];
+                        $time = max($time, filemtime($a));
+                        continue;
+                    }
                 }
             } else {
                 throw new \Exception('incorrect bundle arguments');
             }
-            if(!file_exists($a)) continue;
-            $filename[]=$pi['basename'];$time=max($time,filemtime($a));
+            if (!file_exists($a)) continue;
+            $filename[] = $pi['basename'];
+            $time = max($time, filemtime($a));
         }
         unset($a);
-       // 'TEMPLATE_PATH' => INDEX_DIR.'/'.$base.'/template'
-        $base='/'.trim(ENGINE::option('page.base',''));
-        $name=INDEX_DIR.$base.'/template/bundle'.crc32(implode(' ',$filename)).$ext;
-        if(file_exists($name)){
-            if (filemtime($name)>=$time)
+        // 'TEMPLATE_PATH' => INDEX_DIR.'/'.$base.'/template'
+        $base = '/' . trim(ENGINE::option('page.base', ''));
+        $name = INDEX_DIR . $base . '/template/bundle' . crc32(implode(' ', $filename)) . $ext;
+        if (file_exists($name)) {
+            if (filemtime($name) >= $time)
                 return ENGINE::link(realpath($name), 'file2url') . '?' . filemtime($name);
         }
-        $h=fopen($name,'a+');
-        foreach($args as $p){
-            if (0===strpos($p,'http')) {
+        $h = fopen($name, 'a+');
+        foreach ($args as $p) {
+            if (0 === strpos($p, 'http')) {
                 $file2 = file_get_contents($p);
-            } elseif(!file_exists($p)) {
+            } elseif (!file_exists($p)) {
                 continue;
             } else {
                 $file2 = file_get_contents($p);
             }
-            fwrite($h, $file2.PHP_EOL);
+            fwrite($h, $file2 . PHP_EOL);
         }
         fclose($h);
         return ENGINE::link(realpath($name), 'file2url') . '?' . filemtime($name);
@@ -630,15 +639,17 @@ class UTILS
             ];
             $link = preg_replace(array_keys($repl), array_values($repl), $link);
         } else {
-            while(!empty($p1) && $p= Autoload::find($p1)) {
+            while (!empty($p1) && $p = Autoload::find($p1)) {
                 $pi = pathinfo($p);
                 if ($pi['extension'] == 'js') {
                     if (file_exists($pmin = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
+                        if (filemtime($pmin) < filemtime($p)) break;
                         $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($p);
                         break;
                     }
                 } else if ($pi['extension'] == 'css') {
                     if (file_exists($pmin = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
+                        if (filemtime($pmin) < filemtime($p)) break;
                         $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($p);
                         break;
                     }
@@ -663,8 +674,9 @@ class UTILS
      * @param $url
      * @return false|string
      */
-    static function idn_to_utf8($url){
-        if(function_exists('idn_to_utf8'))
+    static function idn_to_utf8($url)
+    {
+        if (function_exists('idn_to_utf8'))
             return idn_to_utf8($url);
         else {
             return IDN::decodeIDN($url);
@@ -676,8 +688,9 @@ class UTILS
      * @param $url
      * @return false|string
      */
-    static function idn_to_ascii($url){
-        if(function_exists('idn_to_ascii'))
+    static function idn_to_ascii($url)
+    {
+        if (function_exists('idn_to_ascii'))
             return idn_to_ascii($url);
         else
             return $url;
