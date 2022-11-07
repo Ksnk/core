@@ -677,7 +677,7 @@ class UTILS
     static function idn_to_utf8($url)
     {
         if (function_exists('idn_to_utf8'))
-            return idn_to_utf8($url);
+            return idn_to_utf8($url, 0 ,INTL_IDNA_VARIANT_UTS46);
         else {
             return IDN::decodeIDN($url);
         }
@@ -691,7 +691,7 @@ class UTILS
     static function idn_to_ascii($url)
     {
         if (function_exists('idn_to_ascii'))
-            return idn_to_ascii($url);
+            return idn_to_ascii($url,0,INTL_IDNA_VARIANT_UTS46);
         else
             return $url;
     }
