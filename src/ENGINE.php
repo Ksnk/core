@@ -1414,6 +1414,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
     {
         $headers = ENGINE::headers();
         if ((isset($headers['X-Requested-With']) && $headers['X-Requested-With'] == 'XMLHttpRequest')
+            || (isset($headers['x-requested-with']) && $headers['x-requested-with'] == 'XMLHttpRequest')
             || isset($_GET['ajax'])
             || (isset($_POST) && isset($_POST['ajax']))
         ) {
