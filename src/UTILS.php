@@ -644,14 +644,14 @@ class UTILS
                 if ($pi['extension'] == 'js') {
                     if (file_exists($pmin = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
                         if (filemtime($pmin) >= filemtime($p)) {
-                            $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($p);
+                            $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($pmin);
                             break;
                         }
                     }
                 } else if ($pi['extension'] == 'css') {
                     if (file_exists($pmin = ($pi['dirname'] . '/' . $pi['filename'] . '.min.' . $pi['extension']))) {
                         if (filemtime($pmin) >= filemtime($p)) {
-                            $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($p);
+                            $link = ENGINE::link(realpath($pmin), 'file2url') . '?' . filemtime($pmin);
                             break;
                         }
                     }
