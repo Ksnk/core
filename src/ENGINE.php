@@ -14,6 +14,7 @@
 /*  --- point::ENGINE_namespace --- */
 
 namespace Ksnk\core;
+
 use Ksnk\core\UTILS;
 
 /*  --- point::ENGINE_top --- */
@@ -96,27 +97,32 @@ class xData implements \Iterator
     }
 
     // итератор
+    #[\ReturnTypeWillChange]
     function rewind()
     {
         // $this->eoa=true;//count($this->data==0);
         reset($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     function current()
     {
         return current($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     function key()
     {
         return key($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     function next()
     {
         return next($this->data);
     }
 
+    #[\ReturnTypeWillChange]
     function valid()
     {
         $key = key($this->data);
@@ -404,16 +410,17 @@ class ENGINE
         return empty($val) ? $def : $val;
     }
 
-    static function evaltpl($template, $par){
-        $ns=\Ksnk\templater\template_compiler::options('namespace').'\\';
+    static function evaltpl($template, $par)
+    {
+        $ns = \Ksnk\templater\template_compiler::options('namespace') . '\\';
         do {
             $tmp_class = 'tmp_' . rand(10000, 99999);
-        } while (class_exists($ns.$tmp_class));
+        } while (class_exists($ns . $tmp_class));
 
-        eval('?>'.\Ksnk\templater\template_compiler::compile_tpl($template, $tmp_class));
-        $tmp_class=$ns.$tmp_class;
-        $t=new $tmp_class();
-        return  $t->_($par);
+        eval('?>' . \Ksnk\templater\template_compiler::compile_tpl($template, $tmp_class));
+        $tmp_class = $ns . $tmp_class;
+        $t = new $tmp_class();
+        return $t->_($par);
     }
 
     static function template($name, $method, $par = array())
@@ -429,11 +436,11 @@ class ENGINE
         }
 //$par = array_merge($this->par, $par);
         if (empty($cache[$name])) {
-            $ns=self::option('template_namespace','').$name;
+            $ns = self::option('template_namespace', '') . $name;
             if (class_exists($ns)) {
                 $class = new $ns();
             } else if (class_exists($name)) {
-                $class= new $name();
+                $class = new $name();
             } else {
                 ENGINE::error('method {{method}} not found',
                     array('{{method}}' => $method . '::' . $name),
@@ -819,7 +826,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
         for ($i = 0; $i < $na; $i++) {
             $msg = func_get_arg($i);
 
-            if(is_string($msg) && strlen($msg)>1 && $msg[0]=='~'){
+            if (is_string($msg) && strlen($msg) > 1 && $msg[0] == '~') {
                 $x = explode('|', substr($msg, 1) . '||');
                 $backtrace_options[$x[0]] = $x[1];
             } else {
@@ -961,8 +968,8 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
     static function hasflag($flag)
     {
         return isset($_COOKIE) &&
-        isset($_COOKIE[self::$cookie_name]) &&
-        preg_match('/\b' . preg_quote($flag) . '\b/', $_COOKIE[self::$cookie_name]);
+            isset($_COOKIE[self::$cookie_name]) &&
+            preg_match('/\b' . preg_quote($flag) . '\b/', $_COOKIE[self::$cookie_name]);
     }
 
     /**
@@ -1078,7 +1085,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
      * @param null $rules
      * @param bool $single - не запускать роутинг от Main
      */
-    static function route($rules = null, $single=false)
+    static function route($rules = null, $single = false)
     {
 
         /** @var array $rules */
@@ -1105,26 +1112,26 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
 
         /** аварийное правило, если никакое правило роутинга не подойдет  */
         ENGINE::set_option(
-            array('class' => 'Main', 'method' => 'do_404', 'query_string'=>$query_string)
+            array('class' => 'Main', 'method' => 'do_404', 'query_string' => $query_string)
         );
 
-        $code = UTILS::val($_SERVER,'REDIRECT_STATUS');
+        $code = UTILS::val($_SERVER, 'REDIRECT_STATUS');
         $codes = array(
             403 => 'Forbidden',
             404 => 'Not Found',
             500 => 'Internal Server Error'
         );
-        $source_host = 'http'.((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '').'://'.$_SERVER['HTTP_HOST'];
+        $source_host = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
 //.$_SERVER['REQUEST_URI'];
         if (array_key_exists($code, $codes) && is_numeric($code)) {
-            if ($code==403){
+            if ($code == 403) {
                 // forbiden?
-                header('location:'.$source_host);
+                header('location:' . $source_host);
                 die("Error $code: {$codes[$code]}");
             }
         } else {
             //die('Unknown error');
-            self::set_option('page.host',$source_host);
+            self::set_option('page.host', $source_host);
             foreach ($rules as $rule) if (!empty($rule)) {
                 if (empty($rule[0]) || preg_match($rule[0], $query_string, $m)) {
                     if (is_callable($rule[1])) {
@@ -1146,8 +1153,8 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
                     break;
                 }
             }
-            if(!$single)
-                self::exec(['Main','route']);
+            if (!$single)
+                self::exec(['Main', 'route']);
         }
 
     }
@@ -1192,7 +1199,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
                     }
                     break;
                 case 'file2url':
-                    $z=\Autoload::find($z);
+                    $z = \Autoload::find($z);
                     if (empty($par)) {
                         $query = '';
                     } else {
@@ -1200,15 +1207,15 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
                     }
                     if (!empty($query))
                         $query = '?' . $query;
-                   // if (!defined('INDEX_DIR')) {
-                        if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['SCRIPT_NAME'])) {
-                            $root = str_replace($_SERVER['SCRIPT_NAME'], '', str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']));
-                        } else {
-                            $root = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
-                        }
-                        $root=rtrim($root,'/');
-                        $z = str_replace(' ','%20',str_replace($root, '', str_replace('\\','/',$z)));
-                   // } else
+                    // if (!defined('INDEX_DIR')) {
+                    if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['SCRIPT_NAME'])) {
+                        $root = str_replace($_SERVER['SCRIPT_NAME'], '', str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']));
+                    } else {
+                        $root = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
+                    }
+                    $root = rtrim($root, '/');
+                    $z = str_replace(' ', '%20', str_replace($root, '', str_replace('\\', '/', $z)));
+                    // } else
                     //    $z = str_replace(str_replace('\\', '/', INDEX_DIR), '', $z);
                     return $z . $query;
                 case 'root':
@@ -1386,7 +1393,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
         if (!ENGINE::getObj($x[0])) {
             $x = array('Main', 'do_404');
         }
-        return ENGINE::exec($x,ENGINE::option('idx1'));
+        return ENGINE::exec($x, ENGINE::option('idx1'));
     }
 
     static function headers()
@@ -1418,7 +1425,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
             || isset($_GET['ajax'])
             || (isset($_POST) && isset($_POST['ajax']))
         ) {
-            if(isset($_POST['ajax']) && $_POST['ajax']=='iframe')
+            if (isset($_POST['ajax']) && $_POST['ajax'] == 'iframe')
                 self::set_option('ajax', 'iframe');
             else
                 self::set_option('ajax', 'json');
@@ -1479,7 +1486,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
                 , ENGINE::option('page_macro', '_')
                 , array_merge(array('data' => $data), ENGINE::slice_option('page.'))
             );
-            if (''===$x) {
+            if ('' === $x) {
                 ENGINE::error($x = ENGINE::_t('template `{{tpl}}::{{macro}}` not defined',
                     array('{{tpl}}' => ENGINE::option('page_tpl', 'main'),
                         '{{macro}}' => ENGINE::option('page_macro', '_'))));
@@ -1498,5 +1505,5 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
 
 /*  --- point::ENGINE_bottom --- */
 
-register_shutdown_function(__NAMESPACE__.'\ENGINE::_shutdown');
+register_shutdown_function(__NAMESPACE__ . '\ENGINE::_shutdown');
 ENGINE::$start_time = microtime(true);
