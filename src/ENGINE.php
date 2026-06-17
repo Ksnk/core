@@ -1121,6 +1121,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
             404 => 'Not Found',
             500 => 'Internal Server Error'
         );
+        if(empty($_SERVER['HTTP_HOST']))$_SERVER['HTTP_HOST']='localhost';
         $source_host = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
 //.$_SERVER['REQUEST_URI'];
         if (array_key_exists($code, $codes) && is_numeric($code)) {
