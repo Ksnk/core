@@ -670,7 +670,7 @@ class ENGINE
             }
             session_set_cookie_params(ENGINE::option('engine.session_lifetime', 600), ENGINE::option('engine.session_path', '/'), ENGINE::option('engine.session_domain', null));
             session_start();
-            setcookie(session_name(), session_id(), time() + ENGINE::option('engine.session_lifetime', 600), ENGINE::option('engine.session_path', '/'), ENGINE::option('engine.session_domain', null));
+            setcookie(session_name(), session_id(), time() + ENGINE::option('engine.session_lifetime', 600), ENGINE::option('engine.session_path', '/'), ENGINE::option('engine.session_domain', '/'));
 
             /*
         if($log){
@@ -1077,6 +1077,10 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
         return self::$db;
     }
 
+    static function protocol(){
+        $is_https=(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']=='https') ||(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')||($_SERVER['SERVER_PORT'] == 443);
+        return  $is_https ? "https://" : "http://";
+    }
 
     /**
      * организация массива - регулярка, имена захваченных
@@ -1122,7 +1126,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
             500 => 'Internal Server Error'
         );
         if(empty($_SERVER['HTTP_HOST']))$_SERVER['HTTP_HOST']='localhost';
-        $source_host = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
+        $source_host = self::protocol() . $_SERVER['HTTP_HOST'];
 //.$_SERVER['REQUEST_URI'];
         if (array_key_exists($code, $codes) && is_numeric($code)) {
             if ($code == 403) {
