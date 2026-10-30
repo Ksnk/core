@@ -1319,7 +1319,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
         $x = ob_get_contents();
         $x .= trim(ENGINE::option('page.debug'));
         if (!empty($x)) {
-            $result['debug'] = utf8_encode($x);
+            $result['debug'] = mb_convert_encoding($x, 'UTF-8', 'ISO-8859-1');
         }
         ob_end_clean();
         self::_finish_ajax($result);
@@ -1364,12 +1364,12 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
         $error = self::option('page.error');
         if (!empty($error)) {
             if (!isset($result['error'])) $result['error'] = '';
-            $result['error'] .= utf8_encode($error);
+            $result['error'] .= mb_convert_encoding($error, 'UTF-8', 'ISO-8859-1');
         }
         $x = ob_get_contents();
         $x .= trim(self::option('page.debug'));
         if (!empty($x)) {
-            $result['debug'] = utf8_encode($x);
+            $result['debug'] = mb_convert_encoding($x, 'UTF-8', 'ISO-8859-1');
         }
         ob_end_clean();
         if (session_id() != "") {
@@ -1383,7 +1383,7 @@ UA:"{{HTTP_USER_AGENT}}"', array('type' => 'session',
         ob_end_clean();
         self::set_option('noreport', 1);
         //echo json_encode_cyr($result);
-        $contents = utf8_encode(json_encode($result));
+        $contents = mb_convert_encoding(json_encode($result), 'UTF-8', 'ISO-8859-1');
         if ('iframe' === self::option('ajax')) {
             $contents = '<script type="text/javascript"> top.' . self::option('iframe_callback', 'ajax_handle') . '(' . $contents . ')</script>';
         }
